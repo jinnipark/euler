@@ -18,7 +18,7 @@
 %% Params: pos_integer()
 %%
 complete(N) ->
-	{atomic, ok} = mnesia:transaction(fun complete_trx/1, [N], 1).
+	mnesia:async_dirty(fun complete_trx/1, [N]).
 
 complete_trx(N) ->
 	case mnesia:select(eu_prime_tb,
@@ -87,7 +87,7 @@ test_trx(N, P) ->
 %% Returns: boolean()
 %%
 check(N) ->
-	case mnesia:transaction(fun check_trx/1, [N], 1) of
+	case mnesia:async_dirty(fun check_trx/1, [N]) of
 		{atomic, Result} -> Result;
 		Error -> {error, Error}
 	end.
@@ -110,7 +110,7 @@ check_trx(N) ->
 %% Returns: [pos_integer()]
 %%
 factorize(N) ->
-	case mnesia:transaction(fun factorize_trx/2, [N, []], 1) of
+	case mnesia:async_dirty(fun factorize_trx/2, [N, []]) of
 		{atomic, Result} -> Result;
 		Error -> {error, Error}
 	end.

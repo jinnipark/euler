@@ -23,11 +23,12 @@ start: compile
 		-sname $(node) -setcookie $(cookie) -mnesia dir '"$(datadir)/$(node)"' \
 		-boot start_sasl -s reloader -s $(APP) -detached -config $(APP)
 
-# Stop the server# Debug running program in production mode.
+# Access debug shell of the running server.
 debug:
 	erl -pa ebin deps/*/ebin -remsh $(node)@`hostname -s` \
 	-sname $(node)_debug -setcookie $(cookie)
 
+# Stop the server
 stop:
 	erl -pa ebin deps/*/ebin -noinput -hidden -setcookie $(cookie) -sname $(node)_control \
 		-s $(APP)_control call $(node)@`hostname -s` stop

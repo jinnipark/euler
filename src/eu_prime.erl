@@ -87,10 +87,7 @@ test_trx(N, P) ->
 %% Returns: boolean()
 %%
 check(N) ->
-	case mnesia:async_dirty(fun check_trx/1, [N]) of
-		{atomic, Result} -> Result;
-		Error -> {error, Error}
-	end.
+	mnesia:async_dirty(fun check_trx/1, [N]).
 
 check_trx(N) ->
 	ok = complete_trx(N),
@@ -110,10 +107,7 @@ check_trx(N) ->
 %% Returns: [pos_integer()]
 %%
 factorize(N) ->
-	case mnesia:async_dirty(fun factorize_trx/2, [N, []]) of
-		{atomic, Result} -> Result;
-		Error -> {error, Error}
-	end.
+	mnesia:async_dirty(fun factorize_trx/2, [N, []]).
 
 factorize_trx(N, Factors) ->
 	case check_trx(N) of

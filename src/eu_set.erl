@@ -8,7 +8,7 @@
 -module(eu_set).
 -author("Sungjin Park <jinni.park@gmail.com>").
 
--export([union/2, intersection/2]).
+-export([union/2, intersection/2, unique/1, group/1, combinations/1, combine/2]).
 
 %%
 %% Calculate a union of set S1 and S2.
@@ -51,3 +51,69 @@ intersection([E | S1], S2, I) ->
 		{undefined, S3} -> intersection(S1, S3, I);
 		{E, S3} -> intersection(S1, S3, I ++ [E])
 	end.
+
+%%
+%% Make every element in set S unique.
+%%
+%% Params: list()
+%% Returns: list()
+%%
+unique(S) ->
+	unique(S, []).
+
+unique([], U) ->
+	U;
+unique([E | S], U) ->
+	case lists:any(fun(E1) -> E1 == E end, U) of
+		true -> unique(S, U);
+		false -> unique(S, U ++ [E])
+	end.
+
+%%
+%% Group the same elements in a set.
+%%
+%% Params: list()
+%% Returns: [list()]
+%%
+group(S) ->
+	group(S, []).
+
+group([], G) ->
+	G;
+group([E | S], G) ->
+	group(S, merge(E, G)).
+
+merge(E, []) ->
+	[[E]];
+merge(E, [L | G]) ->
+	case lists:any(fun(E1) -> E1 == E end, L) of
+		true -> [[E | L] | G];
+		false -> [L | merge(E, G)]
+	end.
+
+%%
+%% Generate all possible combinations in a group set.
+%%
+%% Params: [list()]
+%% Returns: [list()]
+%%
+combinations([]) ->
+	[];
+combinations([H | T]) ->
+	combine(H, combinations(T)).
+
+%%
+%% Combine two sets.
+%%
+%% Params: list(), list()
+%% Returns: [list()]
+%%
+combine(A, B) ->
+	combine(A, B, []).
+
+combine(A, [], Z) ->
+	Z ++ lists:map(fun(E) -> [E] end, A);
+combine([], _B, Z) ->
+	Z;
+combine([H | A], B, Z) ->
+	combine(A, B, Z ++ lists:map(fun(E) -> [H | E] end, B)).

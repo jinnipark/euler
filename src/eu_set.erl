@@ -64,7 +64,7 @@ unique(S) ->
 unique([], U) ->
 	U;
 unique([E | S], U) ->
-	case lists:any(fun(E1) -> E1 == E end, U) of
+	case lists:member(E, U) of
 		true -> unique(S, U);
 		false -> unique(S, U ++ [E])
 	end.
@@ -86,7 +86,7 @@ group([E | S], G) ->
 merge(E, []) ->
 	[[E]];
 merge(E, [L | G]) ->
-	case lists:any(fun(E1) -> E1 == E end, L) of
+	case lists:member(E, L) of
 		true -> [[E | L] | G];
 		false -> [L | merge(E, G)]
 	end.

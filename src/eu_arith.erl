@@ -8,7 +8,7 @@
 -module(eu_arith).
 -author("Sungjin Park <jinni.park@gmail.com>").
 
--export([factorial/1, lcm/2, gcd/2, divisors/1]).
+-export([factorial/1, fibonacci/1, lcm/2, gcd/2, gcd_opt/2, divisors/1]).
 
 %%
 %% Calculate N!
@@ -23,6 +23,22 @@ factorial(0, F) ->
 	F;
 factorial(N, F) ->
 	factorial(N - 1, N * F).
+
+%%
+%% Find Nth fibonacci number.
+%%
+%% Params: integer()
+%% Returns: integer()
+%%
+fibonacci(N) ->
+	fibonacci(N, {0, 1}).
+
+fibonacci(0, {N2, _}) ->
+	N2;
+fibonacci(1, {_, N1}) ->
+	N1;
+fibonacci(N, {N2, N1}) ->
+	fibonacci(N - 1, {N1, N2 + N1}).
 
 %%
 %% Calculate the least common multiple of N1 and N2.
@@ -43,6 +59,17 @@ lcm(N1, N2) ->
 gcd(N1, N2) ->
 	lists:foldl(fun(F, Acc) -> F * Acc end, 1,
 			eu_set:intersection(eu_prime:factorize(N1), eu_prime:factorize(N2))).
+
+%%
+%% Calculate the greatest common divisor with euclid's algorithm.
+%%
+%% Params: integer(), integer()
+%% Returns: integer()
+%%
+gcd_opt(N, 0) ->
+	N;
+gcd_opt(N1, N2) ->
+	gcd_opt(N2, N1 rem N2).
 
 %%
 %% Get all the divisors of N.
